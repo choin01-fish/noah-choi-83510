@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Noah Choi — Quantitative Research</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── Reset & Variables ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream:   #f7f4ef;
+      --paper:   #ede9e1;
+      --ink:     #1a1714;
+      --ink-mid: #4a4540;
+      --ink-lt:  #8a8178;
+      --rule:    #c8c0b4;
+      --accent:  #2a4a7f;
+      --accent2: #8b1a1a;
+      --ff-serif: 'Playfair Display', Georgia, serif;
+      --ff-body:  'EB Garamond', Georgia, serif;
+      --ff-mono:  'DM Mono', 'Courier New', monospace;
+    }
+
+    html { scroll-behavior: smooth; font-size: 18px; }
+
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: var(--ff-body);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Noise Texture Overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.5;
+    }
+
+    /* ── Utility ── */
+    .container { max-width: 1060px; margin: 0 auto; padding: 0 2rem; }
+    .section-label {
+      font-family: var(--ff-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ink-lt);
+    }
+
+    /* ── Navbar ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(247,244,239,0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .nav-inner {
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-family: var(--ff-serif);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ink);
+      text-decoration: none;
+      letter-spacing: 0.01em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--ff-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-mid);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* Mobile nav toggle */
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      flex-direction: column;
+      gap: 5px;
+      padding: 4px;
+    }
+    .nav-toggle span {
+      display: block;
+      width: 22px;
+      height: 1.5px;
+      background: var(--ink);
+      transition: transform 0.25s, opacity 0.25s;
+    }
+    .nav-toggle.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .nav-toggle.open span:nth-child(2) { opacity: 0; }
+    .nav-toggle.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    .mobile-menu {
+      display: none;
+      flex-direction: column;
+      gap: 0;
+      background: var(--cream);
+      border-bottom: 1px solid var(--rule);
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: var(--ff-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink-mid);
+      text-decoration: none;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid var(--paper);
+    }
+    .mobile-menu a:hover { color: var(--accent); }
+
+    /* ── Hero ── */
+    #hero {
+      padding-top: 56px;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .hero-text {
+      padding: 6rem 3rem 6rem 2rem;
+      border-right: 1px solid var(--rule);
+    }
+
+    .hero-eyebrow {
+      font-family: var(--ff-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-lt);
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-name {
+      font-family: var(--ff-serif);
+      font-size: clamp(2.8rem, 5vw, 4.5rem);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 0.4rem;
+    }
+
+    .hero-name em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-title {
+      font-family: var(--ff-serif);
+      font-size: 1.05rem;
+      font-style: italic;
+      color: var(--ink-mid);
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .hero-desc {
+      font-size: 1rem;
+      color: var(--ink-mid);
+      max-width: 38ch;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: var(--ff-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+      border: 1px solid var(--ink);
+      padding: 0.75rem 1.4rem;
+      transition: background 0.2s, color 0.2s;
+    }
+    .hero-cta:hover { background: var(--ink); color: var(--cream); }
+    .hero-cta + .hero-cta { margin-left: 0.8rem; border-color: var(--rule); color: var(--ink-mid); }
+    .hero-cta + .hero-cta:hover { background: var(--accent); color: var(--cream); border-color: var(--accent); }
+
+    .hero-image-panel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 2rem;
+      position: relative;
+    }
+
+    .hero-photo-wrap {
+      position: relative;
+      width: 320px;
+    }
+
+    .hero-photo-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -10px -10px 10px 10px;
+      border: 1px solid var(--rule);
+      z-index: 0;
+    }
+
+    .hero-photo-wrap img {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      object-fit: cover;
+      display: block;
+      filter: grayscale(15%);
+    }
+
+    .hero-meta {
+      position: absolute;
+      bottom: 3rem;
+      right: 2rem;
+      text-align: right;
+    }
+
+    .hero-meta p {
+      font-family: var(--ff-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-lt);
+      line-height: 1.9;
+    }
+
+    /* ── About ── */
+    #about {
+      padding: 7rem 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .about-sidebar {
+      padding-top: 0.3rem;
+    }
+
+    .about-sidebar .section-label {
+      display: block;
+      margin-bottom: 1.5rem;
+    }
+
+    .about-sidebar-rule {
+      width: 40px;
+      height: 1px;
+      background: var(--ink);
+      margin-bottom: 2rem;
+    }
+
+    .about-sidebar p {
+      font-family: var(--ff-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-lt);
+      line-height: 2;
+    }
+
+    .about-body h2 {
+      font-family: var(--ff-serif);
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      font-weight: 600;
+      line-height: 1.2;
+      color: var(--ink);
+      margin-bottom: 1.8rem;
+      letter-spacing: -0.01em;
+    }
+
+    .about-body h2 em { font-style: italic; color: var(--accent); }
+
+    .about-body p {
+      font-size: 1.05rem;
+      color: var(--ink-mid);
+      margin-bottom: 1.2rem;
+      max-width: 62ch;
+    }
+
+    /* ── Projects ── */
+    #projects {
+      padding: 7rem 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .projects-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 4rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .projects-header h2 {
+      font-family: var(--ff-serif);
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 700;
+      letter-spacing: -0.015em;
+    }
+
+    .projects-header .section-label { margin-bottom: 0; }
+
+    .project-card {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border: 1px solid var(--rule);
+      margin-bottom: 2.5rem;
+      transition: box-shadow 0.3s;
+    }
+    .project-card:hover { box-shadow: 6px 6px 0 var(--rule); }
+
+    .project-card:nth-child(even) { direction: rtl; }
+    .project-card:nth-child(even) > * { direction: ltr; }
+
+    .project-image {
+      overflow: hidden;
+      background: var(--paper);
+      position: relative;
+    }
+
+    .project-image img {
+      width: 100%;
+      height: 100%;
+      min-height: 280px;
+      object-fit: cover;
+      display: block;
+      filter: grayscale(20%);
+      transition: transform 0.5s, filter 0.3s;
+    }
+    .project-card:hover .project-image img {
+      transform: scale(1.03);
+      filter: grayscale(0%);
+    }
+
+    .project-pdf {
+      width: 100%;
+      min-height: 340px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .project-pdf iframe {
+      flex: 1;
+      width: 100%;
+      min-height: 280px;
+      border: none;
+      display: block;
+    }
+
+    .pdf-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.65rem 1rem;
+      background: var(--paper);
+      border-top: 1px solid var(--rule);
+      text-decoration: none;
+      color: var(--ink-mid);
+      font-family: var(--ff-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      transition: background 0.2s, color 0.2s;
+    }
+    .pdf-link:hover { background: var(--ink); color: var(--cream); }
+
+    .project-content {
+      padding: 2.5rem 2.8rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .project-num {
+      font-family: var(--ff-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--ink-lt);
+      margin-bottom: 1rem;
+    }
+
+    .project-title {
+      font-family: var(--ff-serif);
+      font-size: 1.35rem;
+      font-weight: 700;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 1rem;
+    }
+
+    .project-title em { font-style: italic; color: var(--accent); }
+
+    .project-desc {
+      font-size: 0.95rem;
+      color: var(--ink-mid);
+      line-height: 1.75;
+      margin-bottom: 1.5rem;
+    }
+
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .tag {
+      font-family: var(--ff-mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 0.25rem 0.6rem;
+    }
+
+    .project-rule {
+      width: 32px;
+      height: 1px;
+      background: var(--rule);
+    }
+
+    /* ── Skills ── */
+    #skills {
+      padding: 7rem 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .skills-header {
+      margin-bottom: 4rem;
+    }
+
+    .skills-header h2 {
+      font-family: var(--ff-serif);
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      margin-top: 0.5rem;
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      border: 1px solid var(--rule);
+    }
+
+    .skill-group {
+      padding: 2rem 2.2rem;
+      border-right: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+    }
+    .skill-group:nth-child(3n) { border-right: none; }
+    .skill-group:nth-last-child(-n+3) { border-bottom: none; }
+
+    .skill-group-title {
+      font-family: var(--ff-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ink-lt);
+      margin-bottom: 1rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .skill-list {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .skill-list li {
+      font-family: var(--ff-body);
+      font-size: 0.88rem;
+      color: var(--ink-mid);
+      position: relative;
+      padding-left: 0.9rem;
+    }
+    .skill-list li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--rule);
+      font-size: 0.7rem;
+    }
+
+    .cert-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      padding: 0.5rem 0.9rem;
+      background: var(--paper);
+      border: 1px solid var(--rule);
+    }
+
+    .cert-badge span {
+      font-family: var(--ff-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-mid);
+    }
+
+    .cert-badge::before {
+      content: '✦';
+      color: var(--accent2);
+      font-size: 0.65rem;
+    }
+
+    /* ── Contact ── */
+    #contact {
+      padding: 7rem 0 6rem;
+    }
+
+    .contact-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    .contact-left h2 {
+      font-family: var(--ff-serif);
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+    }
+
+    .contact-left h2 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .contact-left p {
+      font-size: 1rem;
+      color: var(--ink-mid);
+      max-width: 40ch;
+    }
+
+    .contact-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: 1px solid var(--rule);
+    }
+
+    .contact-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.4rem 1.8rem;
+      border-bottom: 1px solid var(--rule);
+      text-decoration: none;
+      color: var(--ink);
+      transition: background 0.2s;
+    }
+    .contact-link:last-child { border-bottom: none; }
+    .contact-link:hover { background: var(--paper); }
+
+    .contact-link-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .contact-link-type {
+      font-family: var(--ff-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink-lt);
+    }
+
+    .contact-link-value {
+      font-family: var(--ff-body);
+      font-size: 1rem;
+      color: var(--ink);
+    }
+
+    .contact-link-arrow {
+      font-size: 1rem;
+      color: var(--rule);
+      transition: transform 0.2s, color 0.2s;
+    }
+    .contact-link:hover .contact-link-arrow {
+      transform: translate(3px, -3px);
+      color: var(--accent);
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--rule);
+      padding: 1.8rem 0;
+    }
+
+    .footer-inner {
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-inner p {
+      font-family: var(--ff-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-lt);
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-text > * {
+      animation: fadeUp 0.7s ease both;
+    }
+    .hero-eyebrow  { animation-delay: 0.1s; }
+    .hero-name     { animation-delay: 0.2s; }
+    .hero-title    { animation-delay: 0.3s; }
+    .hero-desc     { animation-delay: 0.4s; }
+    .hero-ctas     { animation-delay: 0.5s; }
+
+    .hero-photo-wrap {
+      animation: fadeUp 0.8s 0.35s ease both;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 860px) {
+      #hero { grid-template-columns: 1fr; min-height: auto; }
+
+      .hero-text {
+        border-right: none;
+        border-bottom: 1px solid var(--rule);
+        padding: 5rem 2rem 3rem;
+      }
+
+      .hero-image-panel { padding: 3rem 2rem 4rem; }
+      .hero-photo-wrap { width: 240px; }
+      .hero-meta { position: static; text-align: left; margin-top: 1.5rem; }
+
+      .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+
+      .project-card { grid-template-columns: 1fr; }
+      .project-card:nth-child(even) { direction: ltr; }
+      .project-image img { min-height: 220px; }
+      .project-pdf iframe { min-height: 260px; }
+      .project-pdf { min-height: 300px; }
+
+      .skills-grid { grid-template-columns: 1fr 1fr; }
+      .skill-group:nth-child(2n) { border-right: none; }
+      .skill-group:nth-child(3n) { border-right: 1px solid var(--rule); }
+      .skill-group:nth-last-child(-n+3) { border-bottom: 1px solid var(--rule); }
+      .skill-group:nth-last-child(-n+2) { border-bottom: none; }
+
+      .contact-inner { grid-template-columns: 1fr; gap: 3rem; }
+
+      .nav-links { display: none; }
+      .nav-toggle { display: flex; }
+    }
+
+    @media (max-width: 560px) {
+      html { font-size: 16px; }
+      .skills-grid { grid-template-columns: 1fr; }
+      .skill-group { border-right: none !important; border-bottom: 1px solid var(--rule) !important; }
+      .skill-group:last-child { border-bottom: none !important; }
+      .hero-photo-wrap::before { display: none; }
+      .projects-header { flex-direction: column; gap: 0.5rem; }
+      .hero-ctas { display: flex; flex-direction: column; align-items: flex-start; gap: 0.8rem; }
+      .hero-cta + .hero-cta { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Navbar ── -->
+  <nav>
+    <div class="nav-inner">
+      <a class="nav-logo" href="#hero">Noah Choi</a>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#projects">Research</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="images/Choi_Noah_Resume.pdf" target="_blank" rel="noopener noreferrer">Resume</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <button class="nav-toggle" aria-label="Toggle menu" onclick="this.classList.toggle('open'); document.getElementById('mobileMenu').classList.toggle('open')">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#about"    onclick="closeMobileMenu()">About</a>
+      <a href="#projects" onclick="closeMobileMenu()">Research</a>
+      <a href="#skills"   onclick="closeMobileMenu()">Skills</a>
+      <a href="images/Choi_Noah_Resume.pdf" target="_blank" rel="noopener noreferrer" onclick="closeMobileMenu()">Resume</a>
+      <a href="#contact"  onclick="closeMobileMenu()">Contact</a>
+    </div>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <section id="hero">
+    <div class="hero-text container" style="padding-left:2rem;">
+      <p class="hero-eyebrow">Quantitative Research &nbsp;·&nbsp; NYU Stern &amp; CAS</p>
+      <h1 class="hero-name">Noah<br><em>Choi</em></h1>
+      <p class="hero-title">Business Technology &amp; Entrepreneurship &amp; Mathematics — NYU, Class of 2029</p>
+      <p class="hero-desc">Applying time series modeling, backtesting, and Python-driven research to macro and relative-value trading strategies.</p>
+      <div class="hero-ctas">
+        <a class="hero-cta" href="#projects">View Research</a>
+        <a class="hero-cta" href="#contact">Get in Touch</a>
+        <a class="hero-cta" href="images/Choi_Noah_Resume.pdf" target="_blank" rel="noopener noreferrer">View Resume</a>
+      </div>
+    </div>
+
+    <div class="hero-image-panel">
+      <div class="hero-photo-wrap">
+        <img src="images/1751581940067.jpg" alt="Portrait photograph of Noah Choi, quantitative researcher and NYU student" />
+      </div>
+      <div class="hero-meta">
+        <p>New York, NY</p>
+        <p>NYU Stern &amp; CAS</p>
+        <p>Class of 2029</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── About ── -->
+  <section id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-sidebar">
+          <span class="section-label">Profile</span>
+          <div class="about-sidebar-rule"></div>
+          <p>
+            Quantitative<br>
+            Research<br>
+            ——<br>
+            Macro Strategy<br>
+            ——<br>
+            Data-Driven<br>
+            Market Analysis
+          </p>
+        </div>
+        <div class="about-body">
+          <h2>Turning market intuition<br>into <em>testable strategies</em></h2>
+          <p>I'm a freshman at NYU studying Business Technology &amp; Entrepreneurship and Mathematics. My work focuses on applying quantitative research, time series modeling, and backtesting to macro and relative-value trading ideas.</p>
+          <p>I'm especially interested in lead-lag relationships, market microstructure, and using Python-driven research to turn market intuition into testable, rigorous strategies.</p>
+          <p>I'm currently building a portfolio of quantitative projects with the goal of pursuing a quantitative research role.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Projects ── -->
+  <section id="projects">
+    <div class="container">
+      <div class="projects-header">
+        <h2>Research &amp; Projects</h2>
+        <span class="section-label">Selected Work</span>
+      </div>
+
+      <!-- Project 1 -->
+      <article class="project-card">
+        <div class="project-image">
+          <div class="project-pdf">
+            <iframe
+              src="images/Gold-Vol-CHFUSD-Lead-Lag.pdf"
+              title="GVZ CHF/USD Lead-Lag Strategy — full research PDF"
+              aria-label="Embedded PDF: GVZ CHF/USD Lead-Lag Strategy research paper"
+            ></iframe>
+            <a class="pdf-link" href="images/project-1.pdf" target="_blank" rel="noopener noreferrer">
+              <span>Open Full PDF</span>
+              <span>↗</span>
+            </a>
+          </div>
+        </div>
+        <div class="project-content">
+          <p class="project-num">01 &nbsp;/&nbsp; Macro Strategy</p>
+          <h3 class="project-title"><em>GVZ CHF/USD</em><br>Lead-Lag Strategy</h3>
+          <p class="project-desc">A quantitative macro strategy showing that spikes in gold volatility predict short-term appreciation in CHF/USD, driven by haven-flow dynamics and validated through lead-lag modeling and backtesting.</p>
+          <div class="project-tags">
+            <span class="tag">Macro</span>
+            <span class="tag">Lead-Lag</span>
+            <span class="tag">FX</span>
+            <span class="tag">Backtesting</span>
+            <span class="tag">Python</span>
+          </div>
+          <div class="project-rule"></div>
+        </div>
+      </article>
+
+      <!-- Project 2 -->
+      <article class="project-card">
+        <div class="project-image">
+          <div class="project-pdf">
+            <iframe
+              src="images/Final DogeBTC - LTCBTC pitch.pdf"
+              title="DOGE/BTC → LTC/BTC Lead-Lag Strategy — full research PDF"
+              aria-label="Embedded PDF: Dogecoin-Bitcoin to Litecoin-Bitcoin Lead-Lag Strategy research paper"
+            ></iframe>
+            <a class="pdf-link" href="images/Final DogeBTC - LTCBTC pitch.pdf" target="_blank" rel="noopener noreferrer">
+              <span>Open Full PDF</span>
+              <span>↗</span>
+            </a>
+          </div>
+        </div>
+        <div class="project-content">
+          <p class="project-num">02 &nbsp;/&nbsp; Relative Value</p>
+          <h3 class="project-title"><em>DOGE/BTC → LTC/BTC</em><br>Lead-Lag Strategy</h3>
+          <p class="project-desc">A crypto relative-value strategy exploiting short-term supply-driven lead-lag effects, where Dogecoin moves predict subsequent underperformance of Litecoin versus Bitcoin due to mining-linked dynamics.</p>
+          <div class="project-tags">
+            <span class="tag">Crypto</span>
+            <span class="tag">Relative Value</span>
+            <span class="tag">Lead-Lag</span>
+            <span class="tag">Mining</span>
+            <span class="tag">Python</span>
+          </div>
+          <div class="project-rule"></div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ── Skills ── -->
+  <section id="skills">
+    <div class="container">
+      <div class="skills-header">
+        <span class="section-label">Competencies</span>
+        <h2>Skills &amp; Tools</h2>
+      </div>
+
+      <div class="skills-grid">
+        <div class="skill-group">
+          <p class="skill-group-title">Programming</p>
+          <ul class="skill-list">
+            <li>Python</li>
+            <li>Pandas</li>
+            <li>NumPy</li>
+            <li>Matplotlib</li>
+            <li>Statsmodels</li>
+            <li>Java</li>
+            <li>SQL</li>
+          </ul>
+        </div>
+
+        <div class="skill-group">
+          <p class="skill-group-title">Machine Learning</p>
+          <ul class="skill-list">
+            <li>Random Forests</li>
+            <li>Decision Trees</li>
+            <li>Ridge Regression</li>
+            <li>KNN</li>
+          </ul>
+        </div>
+
+        <div class="skill-group">
+          <p class="skill-group-title">Quantitative Methods</p>
+          <ul class="skill-list">
+            <li>Time Series Analysis</li>
+            <li>Backtesting</li>
+            <li>Lead-Lag Modeling</li>
+            <li>Quantitative Research</li>
+          </ul>
+        </div>
+
+        <div class="skill-group" style="border-bottom:none;">
+          <p class="skill-group-title">Tools &amp; Software</p>
+          <ul class="skill-list">
+            <li>Microsoft Office Suite</li>
+          </ul>
+        </div>
+
+        <div class="skill-group" style="border-bottom:none;">
+          <p class="skill-group-title">Certifications</p>
+          <div class="cert-badge">
+            <span>Citi Certification in Human Research</span>
+          </div>
+        </div>
+
+        <div class="skill-group" style="border-bottom:none;">
+          <p class="skill-group-title">Focus Areas</p>
+          <ul class="skill-list">
+            <li>Macro Strategy</li>
+            <li>Market Microstructure</li>
+            <li>Relative Value</li>
+            <li>Haven-Flow Dynamics</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Contact ── -->
+  <section id="contact">
+    <div class="container">
+      <div class="contact-inner">
+        <div class="contact-left">
+          <span class="section-label">Get in Touch</span>
+          <h2 style="margin-top:0.6rem;">Let's talk<br><em>quantitative</em><br>research.</h2>
+          <p>Open to conversations about quantitative research, trading strategies, and opportunities in finance and data science.</p>
+        </div>
+
+        <div>
+          <div class="contact-links">
+            <a class="contact-link" href="mailto:choin01@stern.nyu.edu">
+              <div class="contact-link-meta">
+                <span class="contact-link-type">Email</span>
+                <span class="contact-link-value">choin01@stern.nyu.edu</span>
+              </div>
+              <span class="contact-link-arrow">↗</span>
+            </a>
+            <a class="contact-link" href="https://www.linkedin.com/in/noah-choi-38280a31b/" target="_blank" rel="noopener noreferrer">
+              <div class="contact-link-meta">
+                <span class="contact-link-type">LinkedIn</span>
+                <span class="contact-link-value">noah-choi-38280a31b</span>
+              </div>
+              <span class="contact-link-arrow">↗</span>
+            </a>
+            <a class="contact-link" href="images/Choi_Noah_Resume.pdf" target="_blank" rel="noopener noreferrer">
+              <div class="contact-link-meta">
+                <span class="contact-link-type">Resume</span>
+                <span class="contact-link-value">Choi_Noah_Resume.pdf</span>
+              </div>
+              <span class="contact-link-arrow">↗</span>
+            </a>
+            <div class="contact-link" style="cursor:default;">
+              <div class="contact-link-meta">
+                <span class="contact-link-type">Based In</span>
+                <span class="contact-link-value">New York, NY</span>
+              </div>
+              <span class="contact-link-arrow" style="opacity:0;">↗</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <div class="footer-inner">
+      <p>© 2025 Noah Choi</p>
+      <p>NYU Stern &amp; College of Arts &amp; Science</p>
+    </div>
+  </footer>
+
+  <script>
+    function closeMobileMenu() {
+      document.getElementById('mobileMenu').classList.remove('open');
+      document.querySelector('.nav-toggle').classList.remove('open');
+    }
+
+    // Subtle scroll-based navbar border opacity
+    const nav = document.querySelector('nav');
+    window.addEventListener('scroll', () => {
+      nav.style.borderBottomColor = window.scrollY > 10 ? 'var(--rule)' : 'transparent';
+    }, { passive: true });
+  </script>
+
+</body>
+</html>
